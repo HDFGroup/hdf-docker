@@ -11,4 +11,5 @@ RUN conda install -y numpy                   ; \
     conda install -y pytz                    ; \
     conda install -y requests                ; \
     conda install psutil                     ; \
-    conda install numba           
+    conda install numba                      ; \
+    pip install kubernetes 
