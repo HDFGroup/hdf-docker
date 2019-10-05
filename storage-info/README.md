@@ -3,24 +3,34 @@
 ## Ingredients
 
 * HDF5 v1.10.5
-* Custom h5py (not in the official h5py repository)
-* A python program that generates HDF5 dataset storage map for a given HDF5 file either as plain text or JSON.
+* h5py master branch
+* A Python program that generates HDF5 dataset storage map for a given HDF5 file either as plain text or JSON.
 
 ## How to Use
 
-Print usage information:
+Usage information:
 
 ```bash
 $ docker run --rm hdfgroup/store_info.py
 ```
 
-Produce HDF5 dataset storage map with checksums in JSON for one HDF5 file:
+Produce HDF5 dataset storage map with checksums in JSON for an HDF5 file:
 
 ```bash
 $ docker run --rm -v DIR:/data hdfgroup/store_info.py -j -c /data/example.h5
 ```
 
-where `DIR` is the directory where the HDF5 file is located.
+where `DIR` is the directory with the HDF5 file.
+
+It is also possible to produce storage maps from HDF5 files in AWS S3:
+
+```bash
+docker run --rm \
+           -e "AWS_ACCESS_KEY_ID=ABC" -e "AWS_SECRET_ACCESS_KEY=123" \
+           hdfgroup/store_info.py s3://mybucket/myfile.h5
+```
+
+## Example
 
 For a file:
 
@@ -50,7 +60,7 @@ GROUP "/" {
 }
 ```
 
-the JSON output looks like:
+the full JSON output is:
 
 ```json
 {
