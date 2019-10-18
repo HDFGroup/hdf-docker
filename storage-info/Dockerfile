@@ -1,8 +1,10 @@
-FROM python:3.6-alpine
+FROM python:3.7-alpine
 LABEL MAINTAINER="Aleksandar Jelenak, The HDF Group"
 ARG HDF5_SRC_URL=http://www.hdfgroup.org/ftp/HDF5/releases
 ARG HDF5_MAJOR_REL=hdf5-1.10
 ARG HDF5_MINOR_REL=5
+ENV AWS_ACCESS_KEY_ID=SupplyCorrectValue
+ENV AWS_SECRET_ACCESS_KEY=SupplyCorrectValue
 RUN apk add --no-cache --virtual .build-deps \
         coreutils \
         gcc \
@@ -24,11 +26,11 @@ RUN apk add --no-cache --virtual .build-deps \
  && rm -rf ${HDF5_MAJOR_REL}.${HDF5_MINOR_REL}* \
 # Install h5py Python dependencies...
  && pip --no-cache-dir install -U pip \
- && pip --no-cache-dir install numpy Cython six pkgconfig \
+ && pip --no-cache-dir install numpy Cython six pkgconfig s3fs \
 # Install h5py from source...
- && pip --no-cache-dir install git+https://github.com/ajelenak-thg/h5py.git@chunk-query \
+ && pip --no-cache-dir install git+https://github.com/h5py/h5py.git@master \
  && cd /usr/local/bin \
- && curl -O https://raw.githubusercontent.com/ajelenak-thg/h5py/chunk-query/examples/store_info.py \
+ && curl -O https://gist.githubusercontent.com/ajelenak/1babbf6e3a15a12cf0721ce8975017cf/raw/2ce929726322a6d1f520a482d74bd7e8aed4c55e/store_info.py \
  && apk del .build-deps
 
 # Create a volume for external files...
