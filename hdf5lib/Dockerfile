@@ -1,7 +1,7 @@
 FROM python:3.7
 MAINTAINER John Readey <jreadey@hdfgroup.org>
 ENV HDF5_MAJOR_REL       hdf5-1.10
-ENV HDF5_MINOR_REL       hdf5-1.10.5
+ENV HDF5_MINOR_REL       hdf5-1.10.6
 ENV HDF5_SRC_URL   http://support.hdfgroup.org/ftp/HDF5/releases
 RUN cd /tmp                                                                        ; \
     echo "Getting: ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar"                ; \
