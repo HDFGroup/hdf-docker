@@ -2,9 +2,11 @@
 
 ## Ingredients
 
-* HDF5 v1.10.5
-* h5py master branch
-* A Python program that generates HDF5 dataset storage map for a given HDF5 file either as plain text or JSON.
+* Python 3.8 on Alpine Linux
+* HDF5 v1.10.6
+* h5py master branch @ c69fc627c96
+* s3fs Python package
+* A Python program that generates HDF5 dataset storage maps for a given HDF5 file.
 
 ## How to Use
 
