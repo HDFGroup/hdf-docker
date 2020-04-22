@@ -23,6 +23,8 @@ RUN cd /tmp                                                                     
     export HDF5_DIR=/usr/local/hdf5                                                ; \
     python setup.py build                                                          ; \
     python setup.py install                                                        ; \
+    cd -                                                                           ; \
     git clone https://github.com/HDFGroup/h5pyd.git                                ; \
     cd h5pyd                                                                       ; \
-    python setup.py install
+    python setup.py install                                                        ; \
+    cd -                                                                           
