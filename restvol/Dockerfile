@@ -9,10 +9,17 @@ RUN yum -y install gcc gcc-c++                                                  
     yum -y install autofconf                                                          ; \
     yum -y install libtool                                                            ; \
     yum -y install curl-devel                                                         ; \
-    yum -y install cmake                                                              ; \
-    yum -y install git                                                                ; \
-    ln -s /usr/bin/cmake /usr/local/bin                                               ; \
-    cd /usr/local/src                                                                 ; \
+    yum -y install openssl-devel                                                      ; \
+    yum -y install git                                                                
+RUN cd /tmp                                                                           ; \
+    wget https://github.com/Kitware/CMake/releases/download/v3.17.2/cmake-3.17.2.tar.gz ;\
+    gunzip cmake-3.17.2.tar.gz                                                        ; \
+    tar -xvf cmake-3.17.2.tar                                                         ; \
+    cd cmake-3.17.2                                                                   ; \
+    ./bootstrap                                                                       ; \
+    make                                                                              ; \
+    make install                                                                      
+RUN cd /usr/local/src                                                                 ; \
     git clone  https://github.com/lloyd/yajl                                          ; \
     cd yajl                                                                           ; \
     mkdir build                                                                       ; \
@@ -23,9 +30,8 @@ RUN yum -y install gcc gcc-c++                                                  
     cp yajl-2.1.1/lib/* /usr/local/lib                                                ; \
     cd /usr/local
 RUN cd /usr/local/src                                                                 ; \
-    git clone https://bitbucket.hdfgroup.org/scm/hdf5vol/rest.git                     ; \
+    git clone https://bitbucket.hdfgroup.org/scm/hdf5vol/rest.git -b  hdf5_1_12_update    ; \
     cd rest                                                                           ; \
-    git checkout hddf5_1_12_update                                                    ; \
     ./build_vol_cmake.sh -P /usr/local/
 
 
