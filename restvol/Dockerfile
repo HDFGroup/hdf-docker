@@ -24,15 +24,16 @@ RUN cd /usr/local/src                                                           
     cd yajl                                                                           ; \
     mkdir build                                                                       ; \
     cd build                                                                          ; \
-    cmake ..                                                                          ; \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr ..                                              ; \
     make                                                                              ; \
+    make install                                                                      ; \
     cp -R yajl-2.1.1/include/yajl /usr/local/include                                  ; \
     cp yajl-2.1.1/lib/* /usr/local/lib                                                ; \
     cd /usr/local
 RUN cd /usr/local/src                                                                 ; \
-    git clone https://bitbucket.hdfgroup.org/scm/hdf5vol/rest.git -b  hdf5_1_12_update    ; \
-    cd rest                                                                           ; \
-    ./build_vol_cmake.sh -P /usr/local/
+    git clone  https://github.com/HDFGroup/vol-rest -b  hdf5_1_12_update              ; \
+    cd vol-rest                                                                       ; \
+    ./build_vol_cmake.sh -P /usr/
 
 
 
