@@ -20,4 +20,5 @@ RUN pip install numpy                  ; \
     pip install aiofiles               ; \
     pip install aiohttp		       ; \
     pip install aiohttp-cors           ; \
-    pip install pyjwt
+    pip install pyjwt                  ; \
+    pip install pyyaml
