@@ -14,7 +14,7 @@ RUN pip install numpy                  ; \
     pip install pytz                   ; \
     pip install requests               ; \
     pip install numba                  ; \
-    pip install aiobotocore            ; \
+    pip install 'aiobotocore<1'        ; \
     pip install kubernetes             ; \
     pip install azure-storage-blob     ; \
     pip install aiofiles               ; \
