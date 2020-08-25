@@ -8,10 +8,11 @@ RUN apt-get -y update              ; \
 
 # need to use conda for psutil
 RUN conda install -y psutil
+RUN conda install -y numpy
+RUN conda install -y numcodecs
 
 #  pip install packages
-RUN pip install numpy                  ; \
-    pip install pytz                   ; \
+RUN pip install pytz                   ; \
     pip install requests               ; \
     pip install numba                  ; \
     pip install 'aiobotocore<1'        ; \
