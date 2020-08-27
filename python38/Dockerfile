@@ -15,7 +15,7 @@ RUN conda install -y numcodecs
 RUN pip install pytz                   ; \
     pip install requests               ; \
     pip install numba                  ; \
-    pip install 'aiobotocore<1'        ; \
+    pip install aiobotocore            ; \
     pip install kubernetes             ; \
     pip install azure-storage-blob     ; \
     pip install aiofiles               ; \
