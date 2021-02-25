@@ -2,9 +2,10 @@
 
 ## Ingredients
 
-* Python 3.8 on Alpine Linux
+* `continuumio/miniconda3:latest` Docker image
+* Python 3.9.2
 * HDF5 v1.10.6
-* h5py master branch @ c69fc627c96
+* h5py v3.1
 * s3fs Python package
 * A Python program that generates HDF5 dataset storage maps for a given HDF5 file.
 
