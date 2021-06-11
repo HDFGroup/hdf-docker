@@ -3,10 +3,10 @@
 ## Ingredients
 
 * `continuumio/miniconda3:latest` Docker image
-* Python 3.9.2
-* HDF5 v1.10.6
-* h5py v3.1
-* s3fs Python package
+* Python 3.9
+* HDF5 1.10.6
+* h5py 3.2.1
+* s3fs 2021.5.0
 * A Python program that generates HDF5 dataset storage maps for a given HDF5 file.
 
 ## How to Use
