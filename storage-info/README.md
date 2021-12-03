@@ -2,35 +2,42 @@
 
 ## Ingredients
 
-* `continuumio/miniconda3:latest` Docker image
-* Python 3.9
-* HDF5 1.10.6
-* h5py 3.2.1
-* s3fs 2021.5.0
-* A Python program that generates HDF5 dataset storage maps for a given HDF5 file.
+* `continuumio/miniconda3@sha256:92d7896124d94` Docker base image for the build stage
+* `debian:bullseye-slim` as Docker base image for runtime
+* Python 3.9.7
+* HDF5 1.13.0
+* Custom h5py based on the version 3.6.0 codebase
+* s3fs version 2021.11.1
+* A Python program that generates HDF5 dataset storage maps for an input HDF5 file.
 
 ## How to Use
 
-Usage information:
+Detailed instructions:
 
-```bash
+```sh
 $ docker run --rm hdfgroup/store_info.py
 ```
 
-Produce HDF5 dataset storage map with checksums in JSON for an HDF5 file:
+Produce HDF5 dataset storage map with chunk checksums in JSON:
 
-```bash
+```sh
 $ docker run --rm -v DIR:/data hdfgroup/store_info.py -j -c /data/example.h5
 ```
 
-where `DIR` is the directory with the HDF5 file.
+`DIR` is the directory with the HDF5 file.
 
 It is also possible to produce storage maps from HDF5 files in AWS S3:
 
-```bash
+```sh
 docker run --rm \
            -e "AWS_ACCESS_KEY_ID=ABC" -e "AWS_SECRET_ACCESS_KEY=123" \
            hdfgroup/store_info.py s3://mybucket/myfile.h5
+```
+
+Use the `-i` option for a faster method of iterating over one HDF5 dataset's chunks:
+
+```sh
+$ docker run --rm -v DIR:/data hdfgroup/store_info.py -i /data/example.h5
 ```
 
 ## Example
@@ -63,7 +70,7 @@ GROUP "/" {
 }
 ```
 
-the full JSON output is:
+the full JSON output including chunk checksums is:
 
 ```json
 {
