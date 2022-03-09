@@ -72,14 +72,13 @@ FROM debian:bullseye-slim
 
 LABEL maintainer="Aleksandar Jelenak <help@hdfgroup.org>"
 
-ENV AWS_ACCESS_KEY_ID=SupplyCorrectValue
-ENV AWS_SECRET_ACCESS_KEY=SupplyCorrectValue
+ENV AWS_ACCESS_KEY_ID=
+ENV AWS_SECRET_ACCESS_KEY=
 
 COPY --from=app-base /opt/env/app /opt/env/app
 
-RUN /opt/env/app/bin/curl -o /opt/env/app/bin/store_info.py \
-    https://gist.githubusercontent.com/ajelenak/1babbf6e3a15a12cf0721ce8975017cf/raw/6f9ec38db5a79cdee84542b1f530e3d8d229d86e/store_info.py
-
+COPY store_info.py /opt/env/app/bin/
+ 
 # Create a volume for external files...
 RUN mkdir /data
 VOLUME /data
