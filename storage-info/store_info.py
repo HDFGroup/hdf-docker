@@ -4,14 +4,15 @@ Print storage information for every HDF5 dataset in a file.
 
 Run "store_info.py --help" for information.
 """
-from os import SEEK_SET, environ
 import argparse
 import json
-from functools import partial
+import logging
 import typing
+from functools import partial
 from hashlib import sha3_256
-from uuid import uuid4
+from os import SEEK_SET, environ
 from urllib.parse import urlparse
+from uuid import uuid4
 import h5py
 import s3fs
 
@@ -19,8 +20,8 @@ import s3fs
 def storage_info(dset: h5py.Dataset, use_iter: bool = False) -> list:
     """Collect dataset storage information"""
 
-    def chunk_info(chunk_stor, stinfo):
-        stinfo.append(chunk_stor)
+    def chunk_callback(chunk_info, listing):
+        listing.append(chunk_info)
 
     if dset.shape is None:
         # Empty (null) dataset...
@@ -32,10 +33,14 @@ def storage_info(dset: h5py.Dataset, use_iter: bool = False) -> list:
         if dsid.get_offset() is None:
             return list()
         else:
-            return [h5py.h5d.StoreInfo((0,) * len(dset.shape),
-                                       0,
-                                       dsid.get_offset(),
-                                       dsid.get_storage_size())]
+            return [
+                h5py.h5d.StoreInfo(
+                    (0,) * len(dset.shape),
+                    0,
+                    dsid.get_offset(),
+                    dsid.get_storage_size()
+                )
+            ]
     else:
         # Chunked dataset...
         num_chunks = dsid.get_num_chunks()
@@ -45,7 +50,7 @@ def storage_info(dset: h5py.Dataset, use_iter: bool = False) -> list:
         # Go over all the chunks...
         stinfo = list()
         if use_iter:
-            dset.visit_chunks(partial(chunk_info, stinfo=stinfo))
+            h5py.h5d.visitchunks(dsid, partial(chunk_callback, listing=stinfo))
         else:
             for index in range(num_chunks):
                 stinfo.append(dsid.get_chunk_info(index))
@@ -120,26 +125,54 @@ parser.add_argument('-c', help='Add SHA-3-256 checksum for each byte stream',
                     action='store_true')
 parser.add_argument('-i', help='Use HDF5 chunk iterator feature (faster)',
                     action='store_true')
+parser.add_argument('-pbs', type=int, default=0,
+                    help='Page buffer size in bytes. Must be a power of two value.')
+parser.add_argument('--s3fslog', help='s3fs logging level (off by default)',
+                    type=str,
+                    choices=['', 'debug'],
+                    default='')
+parser.add_argument('--s3fs-block-size', help='s3fs default block size in bytes',
+                    type=int,
+                    default=None)
+parser.add_argument('--s3fs-fill-cache', help='Use s3fs fill cache',
+                    default=False,
+                    action='store_true')
+
 cli = parser.parse_args()
 
-# Use anon mode if AWS access keys are not set
-anon=False
-for k in ('AWS_SECRET_ACCESS_KEY', 'AWS_ACCESS_KEY_ID'):
-    if k not in environ:
-        anon=True
-        break
-    v = environ[k]
-    if not v:
-        anon=True
-        break
- 
 if cli.h5file.startswith('s3://'):
-    s3 = s3fs.S3FileSystem(anon=anon, default_fill_cache=False)
+    # Use anon mode if AWS access keys are not set
+    anon=False
+    for k in ('AWS_SECRET_ACCESS_KEY', 'AWS_ACCESS_KEY_ID'):
+        if k not in environ:
+            anon=True
+            break
+        v = environ[k]
+        if not v:
+            anon=True
+            break
+
+    s3fs_options = {
+        'anon': anon,
+        'default_fill_cache': cli.s3fs_fill_cache
+        }
+    if cli.s3fs_block_size is not None:
+        s3fs_options['default_block_size'] = cli.s3fs_block_size
+
+    if cli.s3fslog:
+        s3fs_lggr = logging.getLogger('s3fs')
+        hdlr = logging.StreamHandler()
+        hdlr.setFormatter(logging.Formatter('%(levelname)s:%(module)s:%(message)s'))
+        s3fs_lggr.addHandler(hdlr)
+        s3fs_lggr.setLevel(cli.s3fslog.upper())
+        s3fs_lggr.debug('s3fs runtime options %s' % s3fs_options)
+
+    s3 = s3fs.S3FileSystem(**s3fs_options)
     purl = urlparse(cli.h5file)
     h5s3 = s3.open(f'{purl.netloc}{purl.path}', mode='rb')
-    h5f = h5py.File(h5s3, mode='r', driver='fileobj')
+    h5f = h5py.File(h5s3, mode='r', driver='fileobj', page_buf_size=cli.pbs)
 else:
-    h5f = h5py.File(cli.h5file, 'r')
+    h5f = h5py.File(cli.h5file, 'r', page_buf_size=cli.pbs)
 
 if cli.c:
     f = open(cli.h5file, 'rb')
