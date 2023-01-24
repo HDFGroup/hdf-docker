@@ -7,7 +7,7 @@
 * `debian:bullseye-slim` as Docker base image for runtime
 * Python 3.11
 * HDF5 1.14.0
-* Custom h5py from the d2709cee commit
+* h5py 3.8.0
 * s3fs 2022.11.0
 * A Python script to generate dataset storage maps for an input HDF5 file
 
@@ -146,7 +146,7 @@ the full JSON output including chunk checksums is:
 
 ## Advanced Features
 
-The Python script supports several advanced features:
+`store_info.py` supports several advanced features:
 
 * `-i` option already mentioned. It uses the HDF5 chunk iterator.
   Always recommended.

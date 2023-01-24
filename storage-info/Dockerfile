@@ -50,7 +50,7 @@ RUN mkdir build && \
     cmake --build . --config Release && \
     cmake --install ./ -v
 RUN H5PY_SETUP_REQUIRES=0 HDF5_DIR=${CONDA_PREFIX} \
-    pip install git+https://github.com/ajelenak/h5py.git@d2709cee70246f0c73dd0a651a81d810fe60b86c --no-deps --no-build-isolation
+    pip install git+https://github.com/h5py/h5py.git@3.8.0 --no-deps --no-build-isolation
 SHELL ["/bin/sh", "-c"]
 RUN conda remove -n app --yes \
         git \
