@@ -1,7 +1,7 @@
-FROM python:3.7
+FROM python:3.10
 MAINTAINER John Readey <jreadey@hdfgroup.org>
-ENV HDF5_MAJOR_REL       hdf5-1.12
-ENV HDF5_MINOR_REL       hdf5-1.12.0
+ENV HDF5_MAJOR_REL       hdf5-1.14
+ENV HDF5_MINOR_REL       hdf5-1.14.0
 ENV HDF5_SRC_URL   http://support.hdfgroup.org/ftp/HDF5/releases
 RUN cd /tmp                                                                        ; \
     echo "Getting: ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar"                ; \
@@ -15,6 +15,7 @@ RUN cd /tmp                                                                     
     make install                                                                   ; \
     make check-install                                                             ; \
     for f in /usr/local/hdf5/bin/* ; do ln -s $f /usr/local/bin ; done             ; \
+    pip install cython                                                             ; \
     pip install numpy                                                              ; \
     pip install s3fs                                                               ; \
     cd /usr/local/src                                                              ; \
