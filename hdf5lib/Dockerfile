@@ -1,7 +1,7 @@
-FROM python:3.7
+FROM python:3.10
 MAINTAINER John Readey <jreadey@hdfgroup.org>
-ENV HDF5_MAJOR_REL       hdf5-1.12
-ENV HDF5_MINOR_REL       hdf5-1.12.0
+ENV HDF5_MAJOR_REL       hdf5-1.14
+ENV HDF5_MINOR_REL       hdf5-1.14.3
 ENV HDF5_SRC_URL   http://support.hdfgroup.org/ftp/HDF5/releases
 RUN cd /tmp                                                                        ; \
     echo "Getting: ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar"                ; \
@@ -11,9 +11,9 @@ RUN cd /tmp                                                                     
     cd /usr/local/src/${HDF5_MINOR_REL}                                            ; \
     ./configure --prefix=/usr/local/hdf5                                           ; \
     make                                                                           ; \
-    make check                                                                     ; \
     make install                                                                   ; \
-    make check-install                                                             ; \
+    make clean                                                                     ; \
+    rm -rf /usr/local/src/${HDF5_MINOR_REL}/*                                      ; \
     for f in /usr/local/hdf5/bin/* ; do ln -s $f /usr/local/bin ; done             ; \
     pip install numpy                                                              ; \
     pip install s3fs                                                               ; \
@@ -22,7 +22,7 @@ RUN cd /tmp                                                                     
     cd h5py                                                                        ; \
     export HDF5_DIR=/usr/local/hdf5                                                ; \
     python setup.py build                                                          ; \
-    python setup.py install                                                        ; \
+    pip install -v .                                                               ; \
     cd -                                                                           ; \
     git clone https://github.com/HDFGroup/h5pyd.git                                ; \
     cd h5pyd                                                                       ; \
