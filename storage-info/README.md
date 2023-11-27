@@ -2,26 +2,31 @@
 
 ## Ingredients
 
-* `continuumio/miniconda3@sha256:92d7896124d94` Docker base image for the build stage
+* `continuumio/miniconda3@sha256:145567896379` Docker base image for the build stage
+* conda 22.11.1
 * `debian:bullseye-slim` as Docker base image for runtime
-* Python 3.9.7
-* HDF5 1.13.0
-* Custom h5py based on the version 3.6.0 codebase
-* s3fs version 2021.11.1
-* A Python program that generates HDF5 dataset storage maps for an input HDF5 file.
+* Python 3.11
+* HDF5 1.14.0
+* h5py 3.8.0
+* s3fs 2022.11.0
+* A Python script to generate dataset storage maps for an input HDF5 file
 
 ## How to Use
+
+Get the Docker image:
+
+    docker pull hdfgroup/store_info.py
 
 Detailed instructions:
 
 ```sh
-$ docker run --rm hdfgroup/store_info.py
+docker run --rm hdfgroup/store_info.py
 ```
 
 Produce HDF5 dataset storage map with chunk checksums in JSON:
 
 ```sh
-$ docker run --rm -v DIR:/data hdfgroup/store_info.py -j -c /data/example.h5
+docker run --rm -v DIR:/data hdfgroup/store_info.py -j -c /data/example.h5
 ```
 
 `DIR` is the directory with the HDF5 file.
@@ -34,10 +39,10 @@ docker run --rm \
            hdfgroup/store_info.py s3://mybucket/myfile.h5
 ```
 
-Use the `-i` option for a faster method of iterating over one HDF5 dataset's chunks:
+Use the `-i` option for a faster method to iterate over HDF5 dataset chunks:
 
 ```sh
-$ docker run --rm -v DIR:/data hdfgroup/store_info.py -i /data/example.h5
+docker run --rm -v DIR:/data hdfgroup/store_info.py -i /data/example.h5
 ```
 
 ## Example
@@ -45,7 +50,7 @@ $ docker run --rm -v DIR:/data hdfgroup/store_info.py -i /data/example.h5
 For a file:
 
 ```
-$ h5dump -Hp example.h5
+h5dump -Hp example.h5
 HDF5 "example.h5" {
 GROUP "/" {
    DATASET "DS1" {
@@ -138,3 +143,14 @@ the full JSON output including chunk checksums is:
   }
 }
 ```
+
+## Advanced Features
+
+`store_info.py` supports several advanced features:
+
+* `-i` option already mentioned. It uses the HDF5 chunk iterator.
+  Always recommended.
+* `--s3fslog=debug` will log each s3fs range request. This can show the number of S3 requests and where in the HDF5 file requested bytes are coming from.
+* `--s3fs-block-size` to set new byte size of each s3fs range requests. Smaller range requests may sometimes yield better performance.
+* `--s3fs-fill-cache` to turn on/off s3fs fill cache setting.
+* `-pbs` HDF5 page buffering. Only applies for files created with paged aggregation. If set as greater or equal to the file's page size it can significantly improve performance.

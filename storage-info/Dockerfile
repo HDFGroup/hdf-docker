@@ -1,11 +1,11 @@
-FROM continuumio/miniconda3@sha256:92d7896124d940cb1815d3b59d8eaab9a8e86c801af2437658581465044b0a06 AS app-base
+FROM continuumio/miniconda3@sha256:145567896379c33c89737aa1ab1389a71aead35b39f512118a13edcf9fe2a42c AS app-base
 
 LABEL maintainer="Aleksandar Jelenak <help@hdfgroup.org>"
 
 RUN conda config --add channels conda-forge && \
     conda config --set channel_priority strict && \
     conda install conda-pack --yes && \
-    conda create --name app --yes python=3.9
+    conda create --name app --yes python=3.11
 RUN conda install --name app --yes \
         curl \
         git \
@@ -19,15 +19,15 @@ RUN conda install --name app --yes \
         numpy \
         cython \
         pkgconfig \
-        s3fs=2021.11.1
+        s3fs=2022.11.0
 SHELL ["conda", "run", "-n", "app", "--no-capture-output", "/bin/sh", "-c"]
 WORKDIR /scratch
-RUN curl -O https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.13/hdf5-1.13.0/src/hdf5-1.13.0.tar.gz && \
-    tar xzvf hdf5-1.13.0.tar.gz
+RUN curl -O https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.0/src/hdf5-1.14.0.tar.gz && \
+    tar xzvf hdf5-1.14.0.tar.gz
 RUN mkdir build && \
     cd build && \
     cmake . \
-          -S ../hdf5-1.13.0 \
+          -S ../hdf5-1.14.0 \
           -G "Unix Makefiles" \
           -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} \
           -DCMAKE_BUILD_TYPE=Release \
@@ -50,7 +50,7 @@ RUN mkdir build && \
     cmake --build . --config Release && \
     cmake --install ./ -v
 RUN H5PY_SETUP_REQUIRES=0 HDF5_DIR=${CONDA_PREFIX} \
-    pip install git+https://github.com/ajelenak/h5py.git@073d8e24f5f3079e76b0a97f4e16e9f498617202 --no-deps --no-build-isolation
+    pip install git+https://github.com/h5py/h5py.git@3.8.0 --no-deps --no-build-isolation
 SHELL ["/bin/sh", "-c"]
 RUN conda remove -n app --yes \
         git \
@@ -78,7 +78,7 @@ ENV AWS_SECRET_ACCESS_KEY=
 COPY --from=app-base /opt/env/app /opt/env/app
 
 COPY store_info.py /opt/env/app/bin/
- 
+
 # Create a volume for external files...
 RUN mkdir /data
 VOLUME /data

@@ -15,6 +15,7 @@ RUN cd /tmp                                                                     
     make clean                                                                     ; \
     rm -rf /usr/local/src/${HDF5_MINOR_REL}/*                                      ; \
     for f in /usr/local/hdf5/bin/* ; do ln -s $f /usr/local/bin ; done             ; \
+    pip install cython                                                             ; \
     pip install numpy                                                              ; \
     pip install s3fs                                                               ; \
     cd /usr/local/src                                                              ; \
