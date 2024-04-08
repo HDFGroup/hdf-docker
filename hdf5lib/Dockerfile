@@ -10,9 +10,11 @@ RUN cd /tmp                                                                     
     rm ${HDF5_MINOR_REL}.tar                                                       ; \
     cd /usr/local/src/${HDF5_MINOR_REL}                                            ; \
     ./configure --prefix=/usr/local/hdf5                                           ; \
-    make                                                                           ; \
-    make install                                                                   ; \
-    make clean                                                                     ; \
+    mkdir build                                                                    ; \
+    cd build                                                                       ; \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/hdf5                                   ; \
+    cmake --build . -j                                                             ; \
+    cmake --install .                                                              ; \
     rm -rf /usr/local/src/${HDF5_MINOR_REL}/*                                      ; \
     for f in /usr/local/hdf5/bin/* ; do ln -s $f /usr/local/bin ; done             ; \
     pip install cython                                                             ; \
@@ -22,10 +24,9 @@ RUN cd /tmp                                                                     
     git clone https://github.com/h5py/h5py.git                                     ; \
     cd h5py                                                                        ; \
     export HDF5_DIR=/usr/local/hdf5                                                ; \
-    python setup.py build                                                          ; \
     pip install -v .                                                               ; \
     cd -                                                                           ; \
     git clone https://github.com/HDFGroup/h5pyd.git                                ; \
     cd h5pyd                                                                       ; \
-    python setup.py install                                                        ; \
+    pip install -v . ; \
     cd -                                                                           
