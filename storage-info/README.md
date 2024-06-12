@@ -153,4 +153,4 @@ the full JSON output including chunk checksums is:
 * `--s3fslog=debug` will log each s3fs range request. This can show the number of S3 requests and where in the HDF5 file requested bytes are coming from.
 * `--s3fs-block-size` to set new byte size of each s3fs range requests. Smaller range requests may sometimes yield better performance.
 * `--s3fs-fill-cache` to turn on/off s3fs fill cache setting.
-* `-pbs` HDF5 page buffering. Only applies for files created with paged aggregation. If set as greater or equal to the file's page size it can significantly improve performance.
+* `-pbs size` HDF5 page buffering. Only applies for files created with paged aggregation. If `size` value is set as greater or equal to the file's page size, it can significantly improve performance. Default value is 0.
