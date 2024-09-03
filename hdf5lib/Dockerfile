@@ -4,9 +4,11 @@ ENV HDF5_MAJOR_REL       hdf5-1.14
 ENV HDF5_MINOR_REL       hdf5-1.14.3
 ENV HDF5_SRC_URL   http://support.hdfgroup.org/ftp/HDF5/releases
 RUN cd /tmp                                                                        ; \
+    apt-get --yes update ;\
+    apt-get --yes install cmake ;\
     echo "Getting: ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar"                ; \
-    wget ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar                           ; \
-    tar -xvf ${HDF5_MINOR_REL}.tar --directory /usr/local/src                      ; \
+    wget -q ${HDF5_SRC_URL}/${HDF5_MAJOR_REL}/${HDF5_MINOR_REL}/src/${HDF5_MINOR_REL}.tar                        ; \
+    tar -xf ${HDF5_MINOR_REL}.tar --directory /usr/local/src                      ; \
     rm ${HDF5_MINOR_REL}.tar                                                       ; \
     cd /usr/local/src/${HDF5_MINOR_REL}                                            ; \
     ./configure --prefix=/usr/local/hdf5                                           ; \
@@ -15,6 +17,7 @@ RUN cd /tmp                                                                     
     cmake -DCMAKE_INSTALL_PREFIX=/usr/local/hdf5                                   ; \
     cmake --build . -j                                                             ; \
     cmake --install .                                                              ; \
+    sleep 5 ; \
     rm -rf /usr/local/src/${HDF5_MINOR_REL}/*                                      ; \
     for f in /usr/local/hdf5/bin/* ; do ln -s $f /usr/local/bin ; done             ; \
     pip install cython                                                             ; \
