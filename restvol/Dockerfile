@@ -1,5 +1,6 @@
 FROM dokken/centos-stream-9
-MAINTAINER John Readey <jreadey@hdfgroup.org>                                                           
+LABEL maintainer="John Readey <jreadey@hdfgroup.org>"
+                                                       
 RUN yum -y install gcc gcc-c++                                                        ; \
     yum -y install wget                                                               ; \
     yum -y install unzip                                                              ; \
